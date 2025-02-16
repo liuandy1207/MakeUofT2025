@@ -88,19 +88,10 @@ void movePlayer(char direction) {
   int y = dy[index];
   if (playerX + x >= 0 && playerX + x < gridSize && playerY + y >= 0 && playerY + y < gridSize) {
     if (grid[playerY + y][playerX + x] == WALL) {
-      setBuzzerVolume(200);
-      ledcAttach(BUZZER_PIN, FREQP, 8);
-      ledcWrite(0, 128);
+      wallNoise();
       wallHit = true;
     } else {
-      setBuzzerVolume(100);
-      ledcAttach(BUZZER_PIN, FREQP, 8);
-      ledcWrite(0, 64);
-      setBuzzerVolume(100);
-      ledcAttach(BUZZER_PIN, FREQP, 8);
-      ledcWrite(0, 64);
-
-
+      stepNoise();
       grid[playerY][playerX] = EMPTY;
       playerX += x;
       playerY += y;
@@ -166,6 +157,24 @@ void setup() {
   movePlayer('D');
   printGrid();
 }
+//sound functions
+void monsterNoise(){
+  ledcAttach(BUZZER_PIN, FREQM, 8);
+  ledcWrite(0, 128);
+}
+void stepNoise(){
+  int steps = 2;
+  for( i == 0; i < steps; i++){
+    setBuzzerVolume(100);
+    ledcAttach(BUZZER_PIN, FREQP, 8);
+    ledcWrite(0, 64);
+  }
+}
+void wallNoise(){
+  setBuzzerVolume(200);
+  ledcAttach(BUZZER_PIN, FREQP, 8);
+  ledcWrite(0, 128);
+}
 
 
 void loop() {
@@ -183,22 +192,17 @@ void loop() {
   if (strlen(result) < 2) {
     //high
     setBuzzerVolume(200);
-    ledcAttach(BUZZER_PIN, FREQM, 8);
-    ledcWrite(0, 128);
-    
+    monsterNoise();
   }
   else if(strlen(result) <3 ) {
     //med
     setBuzzerVolume(100);
-    ledcAttach(BUZZER_PIN, FREQM, 8);
-    ledcWrite(0, 128);
+    monsterNoise();
   }
   else if(strlen(result) <4 ){
     //low
     setBuzzerVolume(50);
-    ledcAttach(BUZZER_PIN, FREQM, 8);
-    ledcWrite(0, 128);
-
+    monsterNoise();
   }
   
   if(wallHit && buttonState == LOW){
