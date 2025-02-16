@@ -86,8 +86,19 @@ void movePlayer(char direction) {
   int y = dy[index];
   if (playerX + x >= 0 && playerX + x < gridSize && playerY + y >= 0 && playerY + y < gridSize) {
     if (grid[playerY + y][playerX + x] == WALL) {
-      // Hit a wall, make noise
+      digitalWrite(buzzer, HIGH);
+      delay(500);
+      digitalWrite(buzzer, LOW);
+      wallHit = true;
     } else {
+      digitalWrite(buzzer, HIGH);
+      delay(200);
+      digitalWrite(buzzer, LOW);
+      delay(200);
+      digitalWrite(buzzer, HIGH);
+      delay(200);
+      digitalWrite(buzzer, LOW);
+
       grid[playerY][playerX] = EMPTY;
       playerX += x;
       playerY += y;
@@ -164,6 +175,23 @@ void loop() {
   // Serial.print("y: ");
   // Serial.println(yValue);
   int buttonState = digitalRead(JOYSTICK_BUTTON_PIN);
+
+  char result[gridSize*gridSize];
+  findShortestPath( monposX, monposY, currX, currY, result);
+  if (strlen(result) < 3) {
+    digitalWrite(buzzer, HIGH);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+  }
+  if(wallHit){
+    moveM(result[0]);
+  }
+  else{
+    wander();
+
 
   valuesToMove(xValue, yValue);
   printGrid();
