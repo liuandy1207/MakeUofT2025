@@ -44,6 +44,7 @@ int monsterX = 4, monsterY = 4;                                   // monster pos
 const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
 const int EXITY = 4, EXITX = 0;
 const int FREQM = 5000, FREQP = 1000;
+bool wallHit = false;
 char grid[5][5] = {
   { '.', '.', '#', '.', '.' },
   { '.', '#', '.', '#', '.' },
