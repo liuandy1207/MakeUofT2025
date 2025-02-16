@@ -42,7 +42,7 @@ int playerX = 0, playerY = 0;  // character position, (0,0) for now
 int gridSize = 5;
 int monsterX = 4, monsterY = 4;                                   // monster position, (4, 4) for now
 const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
-
+const int exitY = 4, exitX = 0;
 char grid[5][5] = {
   { '.', '.', '#', '.', '.' },
   { '.', '#', '.', '#', '.' },
@@ -178,20 +178,30 @@ void loop() {
 
   char result[gridSize*gridSize];
   findShortestPath( monposX, monposY, currX, currY, result);
-  if (strlen(result) < 3) {
-    digitalWrite(buzzer, HIGH);
-    delay(100);
-    digitalWrite(buzzer, LOW);
-    delay(100);
-    digitalWrite(buzzer, LOW);
-    delay(100);
+  if (strlen(result) < 2) {
+    //high
   }
-  if(wallHit){
+  else if(strlen(result) <3 ) {
+    //med
+  }
+  else if(strlen(result) <4 ){
+    //low
+  }
+  
+  if(wallHit && !buttonState){
     moveM(result[0]);
+    wallHit;
   }
   else{
     wander();
+  }
 
+  if(playerX == monsterX && playerY == monsterY && !buttonState){
+    //loseidk
+  }
+  if(playerY == exitY && playerX == exitX){
+    //win
+  }
 
   valuesToMove(xValue, yValue);
   printGrid();
