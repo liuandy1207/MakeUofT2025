@@ -1,4 +1,5 @@
 #include <queue>
+
 // Joystick, white
 #define JOYSTICK_X_PIN 34
 #define JOYSTICK_Y_PIN 35
@@ -183,12 +184,12 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
-  // Joystick
-  pinMode(JOYSTICK_BUTTON_PIN, INPUT_PULLUP);
-
   // Buzzer Set Up
-  ledcAttach(BUZZER_PIN, 1000, 8);  // Channel 0, 1kHz frequency, 8-bit resolution
+  ledcAttach(BUZZER_PIN, 2000, 8);  // Channel 0, 2kHz frequency, 8-bit resolution
   // lower frequency, deeper sound
+  
+  //Joysticks
+  pinMode(JOYSTICK_BUTTON_PIN, INPUT_PULLUP);
 
   // Map Set Up
   setGrid();
@@ -219,7 +220,7 @@ void loop() {
   // Serial.println(xValue);
   // Serial.print("y: ");
   // Serial.println(yValue);
-  int buttonState = digitalRead(JOYSTICK_BUTTON_PIN);
+ int buttonState = digitalRead(JOYSTICK_BUTTON_PIN); // default is HIGH
   // Joystick
   if (playerX == monsterX && playerY == monsterY && buttonState == HIGH) {
     loseSound();
@@ -249,7 +250,7 @@ void loop() {
     setBuzzerVolume(0);
   }
 
-  if (wallHit && buttonState == HIGH) {
+  if (wallHit) {
     moveMonster(result[0]);
     wallHit = false;
   } else {
@@ -262,6 +263,7 @@ void loop() {
 }
 
 void winSound() {
+  ledcWrite(BUZZER_PIN, 128);
   for (int i = 0; i < 3; i++) {
     ledcWriteNote(BUZZER_PIN, NOTE_G, 3);
     delay(200);
@@ -275,6 +277,7 @@ void winSound() {
 }
 
 void loseSound() {
+  ledcWrite(BUZZER_PIN, 128);
   ledcWriteNote(BUZZER_PIN, NOTE_Fs, 4);
   delay(1000);
   ledcWriteNote(BUZZER_PIN, NOTE_G, 3);
