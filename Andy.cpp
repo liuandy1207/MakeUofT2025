@@ -3,6 +3,32 @@
 #define JOYSTICK_Y_PIN 35
 #define JOYSTICK_BUTTON_PIN 32
 
+// Joystick Functions
+void valuesToMove(int xValue, int yValue) {
+  int thresholdLow = 1025;   // Lower threshold for joystick movement
+  int thresholdHigh = 3071;  // Upper threshold for joystick movement
+
+  char move = '?';
+
+  if (yValue != xValue) {
+    if (yValue < thresholdLow) {
+      move = 'U';
+    } else if (yValue > thresholdHigh) {
+      move = 'D';
+    } else if (xValue < thresholdLow) {
+      move = 'L';
+    } else if (xValue > thresholdHigh) {
+      move = 'R';
+    }
+  }
+
+  // if valid move direction is detected, move player
+  if (move != '?') {
+    movePlayer(move);
+  }
+  Serial.println(move);
+}
+
 // Buzzer, Brown
 #define BUZZER_PIN 27
 
@@ -14,7 +40,7 @@ void setBuzzerVolume(int volume) {
 
 int playerX = 0, playerY = 0;  // character position, (0,0) for now
 int gridSize = 5;
-int monsterX = 4, monsterY = 4; // monster position, (4, 4) for now
+int monsterX = 4, monsterY = 4;                                   // monster position, (4, 4) for now
 const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
 bool wallHit = false;
 char grid[5][5] = {
@@ -108,7 +134,7 @@ void wander() {
   int validMove = 0;
 
   while (!validMove) {
-    int randIndex = random(0, 4); // Pick a random direction
+    int randIndex = random(0, 4);  // Pick a random direction
     newX = monsterX + dx[randIndex];
     newY = monsterY + dy[randIndex];
 
@@ -118,7 +144,6 @@ void wander() {
       validMove = 1;
     }
   }
-  Serial.println("i wander");
 }
 
 void setup() {
@@ -153,18 +178,20 @@ void loop() {
   }
   if(wallHit){
     moveM(result[0]);
-    
   }
   else{
     wander();
   }
+  // Joystick
+  int xValue = analogRead(JOYSTICK_X_PIN);
+  int yValue = analogRead(JOYSTICK_Y_PIN);
+  // Serial.print("x: ");
+  // Serial.println(xValue);
+  // Serial.print("y: ");
+  // Serial.println(yValue);
+  int buttonState = digitalRead(JOYSTICK_BUTTON_PIN);
 
+  valuesToMove(xValue, yValue);
   printGrid();
   delay(1000);
 }
-
-
-//   if (yInput < 1025) moveP(0, -1);
-//   if (yInput > 3071) moveP(0, 1);
-//   if (xInput < 1025) moveP(-1, 0);
-//   if (xInput > 3071) moveP(1, 0);
