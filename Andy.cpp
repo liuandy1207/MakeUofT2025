@@ -46,6 +46,7 @@ void printGrid() {
 const int dx[4] = { 0, 0, -1, 1 };
 const int dy[4] = { -1, 1, 0, 0 };
 const char moves[4] = { 'U', 'D', 'L', 'R' };
+char prevMove = '?';
 
 void movePlayer(char direction) {
   int index = -1;
@@ -87,11 +88,12 @@ void moveMonster(char direction) {
       monsterX += x;
       monsterY += y;
       grid[monsterY][monsterX] = MONSTER;
+      prevMove = moves[index];
     }
   }
 }
 
-void wander() {
+void wander() { // ********** help
   int newX, newY;
   int validMove = 0;
 
@@ -101,8 +103,9 @@ void wander() {
     newY = monsterY + dy[randDir];
 
     // Check if new position is within bounds and not a wall
-    if (newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && grid[newY][newX] != WALL) {
+    if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize && grid[newY][newX] != WALL) {
       moveMonster(randDir);
+      validMove = 1;
     }
   }
 }
@@ -133,52 +136,6 @@ void loop() {
 }
 
 
-
-// char prevMove = 'U';
-
-// // Structure to store BFS nodes
-// struct Node {
-//   int x, y;
-//   char path[25];  // Fixed-size char array for path storage
-// };
-
-
-
-// // BFS function to find the shortest path
-// void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
-//   bool visited[5][5] = { false };
-//   queue<Node> q;
-//   Node start = { sx, sy, "" };
-//   q.push(start);
-//   visited[sx][sy] = true;
-
-//   while (!q.empty()) {
-//     Node current = q.front();
-//     q.pop();
-
-//     // If we reached the end
-//     if (current.x == ex && current.y == ey) {
-//       strcpy(result, current.path);
-//       return;
-//     }
-
-//     // Try moving in all 4 directions
-//     for (int i = 0; i < 4; i++) {
-//       int nx = current.x + dx[i];
-//       int ny = current.y + dy[i];
-
-//       if (nx >= 0 && ny >= 0 && nx < gridsize && ny < gridsize && grid[ny][nx] != '#' && !visited[ny][nx]) {
-//         visited[ny][nx] = true;
-//         Node next = { nx, ny, "" };
-//         strcpy(next.path, current.path);
-//         strncat(next.path, &moves[i], 1);
-//         q.push(next);
-//       }
-//     }
-//   }
-
-//   strcpy(result, "No Path");  // No valid path found
-// }
 
 // char reverse_direction( char direction){
 //   if (direction == 'U'){
