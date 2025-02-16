@@ -16,7 +16,7 @@ int playerX = 0, playerY = 0;  // character position, (0,0) for now
 int gridSize = 5;
 int monsterX = 4, monsterY = 4; // monster position, (4, 4) for now
 const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
-
+bool wallHit = false;
 char grid[5][5] = {
   { '.', '.', '#', '.', '.' },
   { '.', '#', '.', '#', '.' },
@@ -60,8 +60,19 @@ void movePlayer(char direction) {
   int y = dy[index];
   if (playerX + x >= 0 && playerX + x < gridSize && playerY + y >= 0 && playerY + y < gridSize) {
     if (grid[playerY + y][playerX + x] == WALL) {
-      // Hit a wall, make noise
+      digitalWrite(buzzer, HIGH);
+      delay(500);
+      digitalWrite(buzzer, LOW);
+      wallHit = true;
     } else {
+      digitalWrite(buzzer, HIGH);
+      delay(200);
+      digitalWrite(buzzer, LOW);
+      delay(200);
+      digitalWrite(buzzer, HIGH);
+      delay(200);
+      digitalWrite(buzzer, LOW);
+
       grid[playerY][playerX] = EMPTY;
       playerX += x;
       playerY += y;
@@ -82,7 +93,6 @@ void moveMonster(char direction) {
   int y = dy[index];
   if (monsterX + x >= 0 && monsterX + x < gridSize && monsterY + y >= 0 && monsterY + y < gridSize) {
     if (grid[monsterY + y][monsterX + x] == WALL) {
-      // Hit a wall, make noise
     } else {
       grid[monsterY][monsterX] = EMPTY;
       monsterX += x;
@@ -131,7 +141,24 @@ void setup() {
 
 
 void loop() {
-  wander();
+  char result[gridSize*gridSize];
+  findShortestPath( monposX, monposY, currX, currY, result);
+  if (strlen(result) < 3) {
+    digitalWrite(buzzer, HIGH);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+  }
+  if(wallHit){
+    moveM(result[0]);
+    
+  }
+  else{
+    wander();
+  }
+
   printGrid();
   delay(1000);
 }
