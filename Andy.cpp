@@ -139,6 +139,40 @@ void wander() {
     }
   }
 }
+void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
+  bool visited[5][5] = { false };
+  queue<Node> q;
+  Node start = { sx, sy, "" };
+  q.push(start);
+  visited[sx][sy] = true;
+
+  while (!q.empty()) {
+    Node current = q.front();
+    q.pop();
+
+    // If we reached the end
+    if (current.x == ex && current.y == ey) {
+      strcpy(result, current.path);
+      return;
+    }
+
+    // Try moving in all 4 directions
+    for (int i = 0; i < 4; i++) {
+      int nx = current.x + dx[i];
+      int ny = current.y + dy[i];
+
+      if (nx >= 0 && ny >= 0 && nx < gridsize && ny < gridsize && grid[ny][nx] != '#' && !visited[ny][nx]) {
+        visited[ny][nx] = true;
+        Node next = { nx, ny, "" };
+        strcpy(next.path, current.path);
+        strncat(next.path, &moves[i], 1);
+        q.push(next);
+      }
+    }
+  }
+
+  strcpy(result, "No Path");  // No valid path found
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -164,7 +198,7 @@ void monsterNoise(){
 }
 void stepNoise(){
   int steps = 2;
-  for( i == 0; i < steps; i++){
+  for( i = 0; i < steps; i++){
     setBuzzerVolume(100);
     ledcAttach(BUZZER_PIN, FREQP, 8);
     ledcWrite(0, 64);
