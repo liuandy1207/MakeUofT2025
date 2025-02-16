@@ -2,7 +2,11 @@
 #define JOYSTICK_X_PIN 34
 #define JOYSTICK_Y_PIN 35
 #define JOYSTICK_BUTTON_PIN 32
-
+//hm
+struct Node {
+  int x, y;
+  char path[25];  // Stores the path taken to reach this node
+};
 // Joystick Functions
 void valuesToMove(int xValue, int yValue) {
   int thresholdLow = 1025;   // Lower threshold for joystick movement
@@ -141,16 +145,16 @@ void wander() {
 }
 void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
   bool visited[5][5] = { false };
-  queue<Node> q;
+  std::queue<Node> q;
   Node start = { sx, sy, "" };
   q.push(start);
-  visited[sx][sy] = true;
+  visited[sy][sx] = true; // Fix: Ensure correct index for visited array
 
   while (!q.empty()) {
     Node current = q.front();
     q.pop();
 
-    // If we reached the end
+    // If we reached the target
     if (current.x == ex && current.y == ey) {
       strcpy(result, current.path);
       return;
@@ -161,19 +165,18 @@ void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
       int nx = current.x + dx[i];
       int ny = current.y + dy[i];
 
-      if (nx >= 0 && ny >= 0 && nx < gridsize && ny < gridsize && grid[ny][nx] != '#' && !visited[ny][nx]) {
+      if (nx >= 0 && ny >= 0 && nx < gridSize && ny < gridSize && grid[ny][nx] != WALL && !visited[ny][nx]) {
         visited[ny][nx] = true;
         Node next = { nx, ny, "" };
         strcpy(next.path, current.path);
-        strncat(next.path, &moves[i], 1);
+        strncat(next.path, &moves[i], 1); // Add movement direction
         q.push(next);
       }
     }
   }
 
-  strcpy(result, "No Path");  // No valid path found
+  strcpy(result, ""); // No valid path found
 }
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
