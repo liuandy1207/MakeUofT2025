@@ -1,0 +1,165 @@
+#define X_axis 34 //temp pin
+#define Y_axis 35
+#define button 32
+
+int startX = 0, startY = 0;
+int gridsize = 5;
+int currX = startX, currY = startY, monposX = gridsize, monposY = gridsize;
+char player = 'P', wall = '#', empty = '.', monster = 'M';
+
+char grid[5][5] = {
+  { 'P', '.', '#', '.', '.' },
+  { '.', '#', '.', '#', '.' },
+  { '.', '.', '.', '.', '.' },
+  { '.', '#', '.', '#', '.' },
+  { '.', '.', '#', '.', 'M' }
+};
+
+// Directions: Up, Down, Left, Right
+const int dx[4] = { -1, 1, 0, 0 };
+const int dy[4] = { 0, 0, -1, 1 };
+const char moves[4] = { 'L', 'R', 'U', 'D' };
+char prevMove = 'U';
+
+// Structure to store BFS nodes
+struct Node {
+  int x, y;
+  char path[25];  // Fixed-size char array for path storage
+};
+
+// Move the player if possible
+void moveP(int x, int y) {
+  if (currX + x >= 0 && currX + x < gridsize && currY + y >= 0 && currY + y < gridsize) {
+    if (grid[currY + y][currX + x] == '#') {
+      // Hit a wall, do nothing
+    } else {
+      grid[currY][currX] = empty;
+      currX += x;
+      currY += y;
+      grid[currY][currX] = player;
+    }
+  }
+}
+void moveM(char direction) {
+  int x, y;
+  if (direction == 'U'){
+    x = 0;
+    y = -1; 
+  }
+  else if (direction == 'D'){
+    x = 0;
+    y = 1;
+  }
+  else if (direction == 'L'){
+    x = -1;
+    y = 0;
+  }
+  else{
+    x = 1;
+    y = 0;
+
+  }
+  if (currX + x >= 0 && currX + x < gridsize && currY + y >= 0 && currY + y < gridsize) {
+    if (grid[monposY + y][monposX + x] == '#') {
+      // Hit a wall, do nothing
+    } else {
+      grid[monposY][monposX] = empty;
+      monposX += x;
+      monposY += y;
+      grid[monposY][monposX] = monster;
+      prevMove = direction;
+    }
+  }
+}
+
+
+// BFS function to find the shortest path
+void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
+  bool visited[5][5] = { false };
+  queue<Node> q;
+  Node start = { sx, sy, "" };
+  q.push(start);
+  visited[sx][sy] = true;
+
+  while (!q.empty()) {
+    Node current = q.front();
+    q.pop();
+
+    // If we reached the end
+    if (current.x == ex && current.y == ey) {
+      strcpy(result, current.path);
+      return;
+    }
+
+    // Try moving in all 4 directions
+    for (int i = 0; i < 4; i++) {
+      int nx = current.x + dx[i];
+      int ny = current.y + dy[i];
+
+      if (nx >= 0 && ny >= 0 && nx < gridsize && ny < gridsize && grid[ny][nx] != '#' && !visited[ny][nx]) {
+        visited[ny][nx] = true;
+        Node next = { nx, ny, "" };
+        strcpy(next.path, current.path);
+        strncat(next.path, &moves[i], 1);
+        q.push(next);
+      }
+    }
+  }
+
+  strcpy(result, "No Path");  // No valid path found
+}
+
+char reverse_direction( char direction){
+  if (direction == 'U'){
+    return('D');
+  }
+  else if (direction == 'D'){
+    return('U');
+  }
+  else if ( direction == 'L'){
+    return('R');
+  }
+  else{
+    return('L');
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(X_axis, INPUT);
+  pinMode(Y_axis, INPUT);
+  pinMode(button, INPUT_PULLUP);
+
+  char path[25];
+  findShortestPath(0, 0, 4, 4, path);
+  Serial.println(path);  // Print shortest path to Serial Monitor
+}
+
+void loop() {
+  int xInput = analogRead(X_axis);
+  int yInput = analogRead(Y_axis);
+  int moveDelay = 300;
+
+  if (yInput < 1025) moveP(0, -1);
+  if (yInput > 3071) moveP(0, 1);
+  if (xInput < 1025) moveP(-1, 0);
+  if (xInput > 3071) moveP(1, 0);
+
+  char result[gridsize * gridsize];
+  if () {  // bool for loud ound && shortest path is <6...? or distance... hmmm
+
+    findShortestPath( monposX, monposY, currX, currY, result);
+    if (strlen(result) < 3) {
+      // do something
+    }
+    moveM(result[0]);
+    // TURN OFF BOOL FOR LOUD OUND
+  } else {
+    char direction = moves[rand() % 4];
+    while(reverse_direction(direction)!= prevMove){
+      moveM(direction);
+    }
+
+  }
+  delay(moveDelay);
+}
