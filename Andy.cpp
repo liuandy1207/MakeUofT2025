@@ -1,3 +1,4 @@
+#include <queue>
 // Joystick, white
 #define JOYSTICK_X_PIN 34
 #define JOYSTICK_Y_PIN 35
@@ -144,7 +145,8 @@ void wander() {
   }
 }
 void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
-  bool visited[5][5] = { false };
+  bool visited[5][5];
+  memset(visited, false, sizeof(visited));
   std::queue<Node> q;
   Node start = { sx, sy, "" };
   q.push(start);
@@ -201,7 +203,7 @@ void monsterNoise(){
 }
 void stepNoise(){
   int steps = 2;
-  for( i = 0; i < steps; i++){
+  for(int i = 0; i < steps; i++){
     setBuzzerVolume(100);
     ledcAttach(BUZZER_PIN, FREQP, 8);
     ledcWrite(0, 64);
