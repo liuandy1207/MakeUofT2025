@@ -201,7 +201,7 @@ void loop() {
 
   }
   
-  if(wallHit && !buttonState){
+  if(wallHit && buttonState == LOW){
     moveMonster(result[0]);
     wallHit = false;
   }
@@ -209,7 +209,7 @@ void loop() {
     wander();
   }
 
-  if(playerX == monsterX && playerY == monsterY && !buttonState){
+  if(playerX == monsterX && playerY == monsterY && buttonState == LOW){
     //loseidk
   }
   if(playerY == EXITY && playerX == EXITX){
