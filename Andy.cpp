@@ -93,21 +93,22 @@ void moveMonster(char direction) {
   }
 }
 
-void wander() { // ********** help
+void wander() {
   int newX, newY;
   int validMove = 0;
 
   while (!validMove) {
-    int randDir = random(0, 4); // Pick a random direction
-    newX = monsterX + dx[randDir];
-    newY = monsterY + dy[randDir];
+    int randIndex = random(0, 4); // Pick a random direction
+    newX = monsterX + dx[randIndex];
+    newY = monsterY + dy[randIndex];
 
     // Check if new position is within bounds and not a wall
     if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize && grid[newY][newX] != WALL) {
-      moveMonster(randDir);
+      moveMonster(moves[randIndex]);
       validMove = 1;
     }
   }
+  Serial.println("i wander");
 }
 
 void setup() {
@@ -130,64 +131,13 @@ void setup() {
 
 
 void loop() {
-  printGrid();
   wander();
+  printGrid();
   delay(1000);
 }
 
-
-
-// char reverse_direction( char direction){
-//   if (direction == 'U'){
-//     return('D');
-//   }
-//   else if (direction == 'D'){
-//     return('U');
-//   }
-//   else if ( direction == 'L'){
-//     return('R');
-//   }
-//   else{
-//     return('L');
-//   }
-// }
-
-// void setup() {
-//   Serial.begin(9600);
-//   pinMode(X_axis, INPUT);
-//   pinMode(Y_axis, INPUT);
-//   pinMode(button, INPUT_PULLUP);
-
-//   char path[25];
-//   findShortestPath(0, 0, 4, 4, path);
-//   Serial.println(path);  // Print shortest path to Serial Monitor
-// }
-
-// void loop() {
-//   int xInput = analogRead(X_axis);
-//   int yInput = analogRead(Y_axis);
-//   int moveDelay = 300;
 
 //   if (yInput < 1025) moveP(0, -1);
 //   if (yInput > 3071) moveP(0, 1);
 //   if (xInput < 1025) moveP(-1, 0);
 //   if (xInput > 3071) moveP(1, 0);
-
-//   char result[gridsize * gridsize];
-//   if () {  // bool for loud ound && shortest path is <6...? or distance... hmmm
-
-//     findShortestPath( monposX, monposY, currX, currY, result);
-//     if (strlen(result) < 3) {
-//       // do something
-//     }
-//     moveM(result[0]);
-//     // TURN OFF BOOL FOR LOUD OUND
-//   } else {
-//     char direction = moves[rand() % 4];
-//     while(reverse_direction(direction)!= prevMove){
-//       moveM(direction);
-//     }
-
-//   }
-//   delay(moveDelay);
-// }
