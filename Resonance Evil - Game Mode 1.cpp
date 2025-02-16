@@ -9,6 +9,7 @@ struct Node {
   int x, y;
   char path[25];  // Stores the path taken to reach this node
 };
+
 // Joystick Functions
 void valuesToMove(int xValue, int yValue) {
   int thresholdLow = 1025;   // Lower threshold for joystick movement
@@ -47,7 +48,7 @@ void setBuzzerVolume(int volume) {
 int playerX = 0, playerY = 0;  // character position, (0,0) for now
 int gridSize = 5;
 int monsterX = 4, monsterY = 4;                                   // monster position, (4, 4) for now
-const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
+const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M', EXIT = 'E';  // graph legend
 const int EXITY = 4, EXITX = 0;
 const int FREQM = 5000, FREQP = 1000;
 bool wallHit = false;
@@ -61,6 +62,7 @@ char grid[5][5] = {
 
 // Map Functions
 void setGrid() {
+  grid[EXITY][EXITX] = EXIT;
   grid[playerY][playerX] = PLAYER;
   grid[monsterY][monsterX] = MONSTER;
 }
@@ -259,7 +261,7 @@ void loop() {
 
   valuesToMove(xValue, yValue);
   printGrid();
-  delay(500);
+  delay(1000);
 }
 
 void winSound() {
