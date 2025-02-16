@@ -178,7 +178,7 @@ void loop() {
   int buttonState = digitalRead(JOYSTICK_BUTTON_PIN);
 
   char result[gridSize*gridSize];
-  findShortestPath( monposX, monposY, currX, currY, result);
+  findShortestPath( monsterX, monsterY, playerX, playerY, result);
   if (strlen(result) < 2) {
     //high
     setBuzzerVolume(200);
