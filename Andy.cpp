@@ -42,7 +42,8 @@ int playerX = 0, playerY = 0;  // character position, (0,0) for now
 int gridSize = 5;
 int monsterX = 4, monsterY = 4;                                   // monster position, (4, 4) for now
 const char PLAYER = 'P', WALL = '#', EMPTY = '.', MONSTER = 'M';  // graph legend
-const int exitY = 4, exitX = 0;
+const int EXITY = 4, EXITX = 0;
+const int FREQM = 5000, FREQP = 1000;
 char grid[5][5] = {
   { '.', '.', '#', '.', '.' },
   { '.', '#', '.', '#', '.' },
@@ -86,18 +87,18 @@ void movePlayer(char direction) {
   int y = dy[index];
   if (playerX + x >= 0 && playerX + x < gridSize && playerY + y >= 0 && playerY + y < gridSize) {
     if (grid[playerY + y][playerX + x] == WALL) {
-      digitalWrite(buzzer, HIGH);
-      delay(500);
-      digitalWrite(buzzer, LOW);
+      setButtonVolume(200);
+      ledcAttach(BUZZER_PIN, FREQP, 8);
+      ledcWrite(0, 128);
       wallHit = true;
     } else {
-      digitalWrite(buzzer, HIGH);
-      delay(200);
-      digitalWrite(buzzer, LOW);
-      delay(200);
-      digitalWrite(buzzer, HIGH);
-      delay(200);
-      digitalWrite(buzzer, LOW);
+      setButtonVolume(100);
+      ledcAttach(BUZZER_PIN, FREQP, 8);
+      ledcWrite(0, 64);
+      setButtonVolume(100);
+      ledcAttach(BUZZER_PIN, FREQP, 8);
+      ledcWrite(0, 64);
+
 
       grid[playerY][playerX] = EMPTY;
       playerX += x;
@@ -180,20 +181,23 @@ void loop() {
   findShortestPath( monposX, monposY, currX, currY, result);
   if (strlen(result) < 2) {
     //high
-    setButtonVolume(50);
-    ledcAttach(BUZZER_PIN, 5000, 8);
+    setButtonVolume(200);
+    ledcAttach(BUZZER_PIN, FREQM, 8);
     ledcWrite(0, 128);
     
   }
   else if(strlen(result) <3 ) {
     //med
     setButtonVolume(100);
-    ledcAttach(BUZZER_PIN, 5000, 8);
+    ledcAttach(BUZZER_PIN, FREQM, 8);
+    ledcWrite(0, 128);
   }
   else if(strlen(result) <4 ){
     //low
-    setButtonVolume(100);
-    ledcAttach(BUZZER_PIN, 5000, 8);
+    setButtonVolume(50);
+    ledcAttach(BUZZER_PIN, FREQM, 8);
+    ledcWrite(0, 128);
+
   }
   
   if(wallHit && !buttonState){
@@ -207,7 +211,7 @@ void loop() {
   if(playerX == monsterX && playerY == monsterY && !buttonState){
     //loseidk
   }
-  if(playerY == exitY && playerX == exitX){
+  if(playerY == EXITY && playerX == EXITX){
     //win
   }
 
