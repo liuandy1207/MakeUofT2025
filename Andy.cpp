@@ -180,17 +180,25 @@ void loop() {
   findShortestPath( monposX, monposY, currX, currY, result);
   if (strlen(result) < 2) {
     //high
+    setButtonVolume(50);
+    ledcAttach(BUZZER_PIN, 5000, 8);
+    ledcWrite(0, 128);
+    
   }
   else if(strlen(result) <3 ) {
     //med
+    setButtonVolume(100);
+    ledcAttach(BUZZER_PIN, 5000, 8);
   }
   else if(strlen(result) <4 ){
     //low
+    setButtonVolume(100);
+    ledcAttach(BUZZER_PIN, 5000, 8);
   }
   
   if(wallHit && !buttonState){
     moveM(result[0]);
-    wallHit;
+    wallHit = false;
   }
   else{
     wander();
