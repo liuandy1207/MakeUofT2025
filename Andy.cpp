@@ -87,15 +87,15 @@ void movePlayer(char direction) {
   int y = dy[index];
   if (playerX + x >= 0 && playerX + x < gridSize && playerY + y >= 0 && playerY + y < gridSize) {
     if (grid[playerY + y][playerX + x] == WALL) {
-      setButtonVolume(200);
+      setBuzzerVolume(200);
       ledcAttach(BUZZER_PIN, FREQP, 8);
       ledcWrite(0, 128);
       wallHit = true;
     } else {
-      setButtonVolume(100);
+      setBuzzerVolume(100);
       ledcAttach(BUZZER_PIN, FREQP, 8);
       ledcWrite(0, 64);
-      setButtonVolume(100);
+      setBuzzerVolume(100);
       ledcAttach(BUZZER_PIN, FREQP, 8);
       ledcWrite(0, 64);
 
@@ -181,20 +181,20 @@ void loop() {
   findShortestPath( monposX, monposY, currX, currY, result);
   if (strlen(result) < 2) {
     //high
-    setButtonVolume(200);
+    setBuzzerVolume(200);
     ledcAttach(BUZZER_PIN, FREQM, 8);
     ledcWrite(0, 128);
     
   }
   else if(strlen(result) <3 ) {
     //med
-    setButtonVolume(100);
+    setBuzzerVolume(100);
     ledcAttach(BUZZER_PIN, FREQM, 8);
     ledcWrite(0, 128);
   }
   else if(strlen(result) <4 ){
     //low
-    setButtonVolume(50);
+    setBuzzerVolume(50);
     ledcAttach(BUZZER_PIN, FREQM, 8);
     ledcWrite(0, 128);
 
