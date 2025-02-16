@@ -150,7 +150,7 @@ void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
   std::queue<Node> q;
   Node start = { sx, sy, "" };
   q.push(start);
-  visited[sy][sx] = true; // Fix: Ensure correct index for visited array
+  visited[sy][sx] = true;  // Fix: Ensure correct index for visited array
 
   while (!q.empty()) {
     Node current = q.front();
@@ -171,13 +171,13 @@ void findShortestPath(int sx, int sy, int ex, int ey, char result[25]) {
         visited[ny][nx] = true;
         Node next = { nx, ny, "" };
         strcpy(next.path, current.path);
-        strncat(next.path, &moves[i], 1); // Add movement direction
+        strncat(next.path, &moves[i], 1);  // Add movement direction
         q.push(next);
       }
     }
   }
 
-  strcpy(result, ""); // No valid path found
+  strcpy(result, "");  // No valid path found
 }
 void setup() {
   // put your setup code here, to run once:
@@ -197,27 +197,22 @@ void setup() {
   printGrid();
 }
 //sound functions
-void monsterNoise(){
-  ledcAttach(BUZZER_PIN, FREQM, 8);
-  ledcWrite(0, 128);
-}
-void stepNoise(){
+void stepNoise() {
   int steps = 2;
-  for(int i = 0; i < steps; i++){
-    setBuzzerVolume(100);
-    ledcAttach(BUZZER_PIN, FREQP, 8);
-    ledcWrite(0, 64);
+  for (int i = 0; i < steps; i++) {
+    ledcWriteNote(BUZZER_PIN, NOTE_C, 3);
+    delay(100);
+    setBuzzerVolume(0);
   }
 }
-void wallNoise(){
-  setBuzzerVolume(200);
-  ledcAttach(BUZZER_PIN, FREQP, 8);
-  ledcWrite(0, 128);
+void wallNoise() {
+  ledcWriteNote(BUZZER_PIN, NOTE_C, 7);
+  delay(100);
+  setBuzzerVolume(0);
 }
 
 
 void loop() {
-  // Joystick
   int xValue = analogRead(JOYSTICK_X_PIN);
   int yValue = analogRead(JOYSTICK_Y_PIN);
   // Serial.print("x: ");
@@ -225,41 +220,65 @@ void loop() {
   // Serial.print("y: ");
   // Serial.println(yValue);
   int buttonState = digitalRead(JOYSTICK_BUTTON_PIN);
+  // Joystick
+  if (playerX == monsterX && playerY == monsterY && buttonState == HIGH) {
+    loseSound();
+    setBuzzerVolume(0);
+    while (true);
+  }
+  if (playerY == EXITY && playerX == EXITX) {
+    winSound();
+    setBuzzerVolume(0);
+    while (true);
+  }
 
-  char result[gridSize*gridSize];
-  findShortestPath( monsterX, monsterY, playerX, playerY, result);
+  char result[gridSize * gridSize];
+  findShortestPath(monsterX, monsterY, playerX, playerY, result);
   if (strlen(result) < 2) {
     //high
-    setBuzzerVolume(200);
-    monsterNoise();
-  }
-  else if(strlen(result) <3 ) {
+    //setBuzzerVolume(200);
+    ledcWriteNote(BUZZER_PIN, NOTE_Fs, 6);
+  } else if (strlen(result) < 3) {
     //med
-    setBuzzerVolume(100);
-    monsterNoise();
-  }
-  else if(strlen(result) <4 ){
+    ledcWriteNote(BUZZER_PIN, NOTE_Fs, 5);
+  } else if (strlen(result) < 4) {
     //low
-    setBuzzerVolume(50);
-    monsterNoise();
-  }
-  
-  if(wallHit && buttonState == LOW){
-    moveMonster(result[0]);
-    wallHit = false;
-  }
-  else{
-    wander();
+    ledcWriteNote(BUZZER_PIN, NOTE_Fs, 4);
+    // monsterNoise();
+  } else {
+    setBuzzerVolume(0);
   }
 
-  if(playerX == monsterX && playerY == monsterY && buttonState == LOW){
-    //loseidk
-  }
-  if(playerY == EXITY && playerX == EXITX){
-    //win
+  if (wallHit && buttonState == HIGH) {
+    moveMonster(result[0]);
+    wallHit = false;
+  } else {
+    wander();
   }
 
   valuesToMove(xValue, yValue);
   printGrid();
+  delay(500);
+}
+
+void winSound() {
+  for (int i = 0; i < 3; i++) {
+    ledcWriteNote(BUZZER_PIN, NOTE_G, 3);
+    delay(200);
+    ledcWriteNote(BUZZER_PIN, NOTE_D, 4);
+    delay(200);
+    ledcWriteNote(BUZZER_PIN, NOTE_Fs, 4);
+    delay(1000);
+  }
+  ledcWriteNote(BUZZER_PIN, NOTE_D, 4);
+    delay(2000);
+}
+
+void loseSound() {
+  ledcWriteNote(BUZZER_PIN, NOTE_Fs, 4);
+  delay(1000);
+  ledcWriteNote(BUZZER_PIN, NOTE_G, 3);
+  delay(1000);
+  ledcWriteNote(BUZZER_PIN, NOTE_Fs, 3);
   delay(1000);
 }
