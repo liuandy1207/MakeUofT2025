@@ -201,7 +201,7 @@ void loop() {
   }
   
   if(wallHit && !buttonState){
-    moveM(result[0]);
+    moveMonster(result[0]);
     wallHit = false;
   }
   else{
