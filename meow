@@ -1,6 +1,7 @@
 #define X_axis 34 //temp pin
 #define Y_axis 35
 #define button 32
+#define buzzer 27
 
 int startX = 0, startY = 0;
 int gridsize = 5;
@@ -158,6 +159,7 @@ void loop() {
     char direction = moves[rand() % 4];
     while(reverse_direction(direction)!= prevMove){
       moveM(direction);
+      break;
     }
 
   }
